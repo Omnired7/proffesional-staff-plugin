@@ -3,7 +3,7 @@
  * Plugin Name: Trinity Medical Staff
  * Plugin URI:  https://omnigecko.io
  * Description: Plugin for custom staff page & shortcode.
- * Version:     1.0.1
+ * Version:     1.0.2
  * Author:      Omni Gecko Solutions
  * Author URI:  https://omnigecko.io
  */
@@ -24,7 +24,7 @@
 <?php
 //Functions After Initalize
     //Staff Extension Metabox - Save
-	//Model / Save Sub Optional Features
+	//Staff / Save Extention
     function save_staff_ext_metabox( $post_id, $post) {
         $nonceNme = 'ext_fields';
         $fieldID = 'ext';
@@ -39,12 +39,78 @@
         update_post_meta($post->ID, $fieldID, $_POST[$fieldID]);
     }
     add_action( 'save_post', 'save_staff_ext_metabox',1 ,2 );
-    //Staff Extension Metabox
+    //Staff / Save Extention
+    function save_staff_job_duties_metabox( $post_id, $post) {
+        $nonceNme = 'job_duties_fields';
+        $fieldID = 'job_duties';
+        // Return if the user doesn't have edit permissions.
+        if ( ! current_user_can( 'edit_post', $post_id ) ) {
+            return $post_id;
+        }
+        // Verify this came from the our screen and with proper authorization,
+        if ( ! isset( $_POST[$fieldID] ) || ! wp_verify_nonce( $_POST[$nonceNme], basename(__FILE__) ) ) {
+            return $post_id;
+        }
+        update_post_meta($post->ID, $fieldID, $_POST[$fieldID]);
+    }
+    add_action( 'save_post', 'save_staff_job_duties_metabox',1 ,2 );
+    //Staff / Save First Name
+    function save_staff_first_name_metabox( $post_id, $post) {
+        $nonceNme = 'first_name_fields';
+        $fieldID = 'first_name';
+        // Return if the user doesn't have edit permissions.
+        if ( ! current_user_can( 'edit_post', $post_id ) ) {
+            return $post_id;
+        }
+        // Verify this came from the our screen and with proper authorization,
+        if ( ! isset( $_POST[$fieldID] ) || ! wp_verify_nonce( $_POST[$nonceNme], basename(__FILE__) ) ) {
+            return $post_id;
+        }
+        update_post_meta($post->ID, $fieldID, $_POST[$fieldID]);
+    }
+    add_action( 'save_post', 'save_staff_first_name_metabox',1 ,2 );
+    //Staff / Save Last Name
+    function save_staff_last_name_metabox( $post_id, $post) {
+        $nonceNme = 'last_name_fields';
+        $fieldID = 'last_name';
+        // Return if the user doesn't have edit permissions.
+        if ( ! current_user_can( 'edit_post', $post_id ) ) {
+            return $post_id;
+        }
+        // Verify this came from the our screen and with proper authorization,
+        if ( ! isset( $_POST[$fieldID] ) || ! wp_verify_nonce( $_POST[$nonceNme], basename(__FILE__) ) ) {
+            return $post_id;
+        }
+        update_post_meta($post->ID, $fieldID, $_POST[$fieldID]);
+    }
+    add_action( 'save_post', 'save_staff_last_name_metabox',1 ,2 );
+    //Staff / Save Birthdate
+    function save_staff_birth_date_metabox( $post_id, $post) {
+        $nonceNme = 'birth_date_fields';
+        $fieldID = 'birth_month';
+        $fieldID2 = 'birth_day';
+        // Return if the user doesn't have edit permissions.
+        if ( ! current_user_can( 'edit_post', $post_id ) ) {
+            return $post_id;
+        }
+        // Verify this came from the our screen and with proper authorization,
+        if ( ! isset( $_POST[$fieldID] ) || ! wp_verify_nonce( $_POST[$nonceNme], basename(__FILE__) ) ) {
+            return $post_id;
+        }
+        update_post_meta($post->ID, $fieldID, $_POST[$fieldID]);
+        // Verify this came from the our screen and with proper authorization,
+        if ( ! isset( $_POST[$fieldID2] ) || ! wp_verify_nonce( $_POST[$nonceNme], basename(__FILE__) ) ) {
+            return $post_id;
+        }
+        update_post_meta($post->ID, $fieldID2, $_POST[$fieldID2]);
+    }
+    add_action( 'save_post', 'save_staff_birth_date_metabox',1 ,2 );
+    //Staff Extension Metaboxes
 	function add_staff_ext_metabox(){
 		function custom_staff_ext (){
 			global $post;
 			wp_nonce_field( basename( __FILE__ ), 'ext_fields' );
-			// Get the location data if it's already been entered
+			// Get the Extension data if it's already been entered
 			$ext = get_post_meta( $post->ID, 'ext', true );
 			// Output the field
 			echo '<input type="text" name="ext" value="' . esc_textarea( $ext )  . '" class="widefat">';
@@ -58,7 +124,132 @@
 			'side',
 			'default',
 			'high'
-		);
+        );
+        function custom_staff_job_duties (){
+			global $post;
+			wp_nonce_field( basename( __FILE__ ), 'job_duties_fields' );
+			// Get the Extension data if it's already been entered
+			$job_duties = get_post_meta( $post->ID, 'job_duties', true );
+			// Output the field
+			echo '<input type="tjob_duties" name="job_duties" value="' . esc_textarea( $job_duties )  . '" class="widefat">';
+			echo '<p>Job dutties for staff.</p>';
+		}
+		add_meta_box(
+			'staff_job_duties',
+			'Job Duties',
+			'custom_staff_job_duties',
+			array('trinitymedicalstaff'),
+			'normal',
+			'default',
+			'high'
+        );
+        function trinity_mediacal_first_name(){
+            global $post;
+            wp_nonce_field( basename( __FILE__ ), 'first_name_fields' );
+            // Get the First Name data if it's already been entered
+            $firstName = get_post_meta( $post->ID, 'first_name', true );
+            echo '<input type="text" name="first_name" value="' . esc_textarea( $firstName )  . '" class="widefat">';
+			echo '<p>First Name For Staff.</p>';
+        }
+        add_meta_box(
+			'staff_first_name',
+			'First Name',
+			'trinity_mediacal_first_name',
+			array('trinitymedicalstaff'),
+			'side',
+			'default',
+			'high'
+        );
+        function trinity_mediacal_last_name(){
+            global $post;
+            wp_nonce_field( basename( __FILE__ ), 'last_name_fields' );
+            // Get the Last Name data if it's already been entered
+            $lastName = get_post_meta( $post->ID, 'last_name', true );
+            echo '<input type="text" name="last_name" value="' . esc_textarea( $lastName )  . '" class="widefat">';
+			echo '<p>Last Name For Staff.</p>';
+        }
+        add_meta_box(
+			'staff_last_name',
+			'Last Name',
+			'trinity_mediacal_last_name',
+			array('trinitymedicalstaff'),
+			'side',
+			'default',
+			'high'
+        );
+        function trinity_mediacal_birth_date(){
+            global $post;
+            wp_nonce_field( basename( __FILE__ ), 'birth_date_fields' );
+            // Get the Birth Date data if it's already been entered
+            $birthMonth = get_post_meta( $post->ID, 'birth_month', true );
+            $birthday = get_post_meta( $post->ID, 'birth_day', true );
+            function selectedChk ($compare, $compare2){
+				$compare = sanitize_text_field($compare);
+				if($compare2 == $compare){
+					return 'value="'.$compare.'" Selected';
+				}else{
+					return 'value="'.$compare.'"';
+				}
+			}
+            echo '<select name="birth_month" class="widefat">
+                    <option '.selectedChk('Jan.', $birthMonth).'>January</option>
+                    <option '.selectedChk('Feb.', $birthMonth).'>February</option>
+                    <option '.selectedChk('Mar.', $birthMonth).'>March</option>
+                    <option '.selectedChk('Apr.', $birthMonth).'>April</option>
+                    <option '.selectedChk('May.', $birthMonth).'>May</option>
+                    <option '.selectedChk('Jun.', $birthMonth).'>June</option>
+                    <option '.selectedChk('Jul.', $birthMonth).'>July</option>
+                    <option '.selectedChk('Aug.', $birthMonth).'>August</option>
+                    <option '.selectedChk('Sep.', $birthMonth).'>September</option>
+                    <option '.selectedChk('Oct.', $birthMonth).'>October</option>
+                    <option '.selectedChk('Nov.', $birthMonth).'>November</option>
+                    <option '.selectedChk('Dec.', $birthMonth).'>December</option>
+                 </select><br><br>';
+            echo '<select name="birth_day" class="widefat">
+                <option '.selectedChk('01', $birthday).' >1</option>
+                <option '.selectedChk('02', $birthday).' >2</option>
+                <option '.selectedChk('03', $birthday).' >3</option>
+                <option '.selectedChk('04', $birthday).' >4</option>
+                <option '.selectedChk('05', $birthday).' >5</option>
+                <option '.selectedChk('06', $birthday).' >6</option>
+                <option '.selectedChk('07', $birthday).' >7</option>
+                <option '.selectedChk('08', $birthday).' >8</option>
+                <option '.selectedChk('09', $birthday).' >9</option>
+                <option '.selectedChk('10', $birthday).' >10</option>
+                <option '.selectedChk('11', $birthday).' >11</option>
+                <option '.selectedChk('12', $birthday).' >12</option>
+                <option '.selectedChk('13', $birthday).' >13</option>
+                <option '.selectedChk('14', $birthday).' >14</option>
+                <option '.selectedChk('15', $birthday).' >15</option>
+                <option '.selectedChk('16', $birthday).' >16</option>
+                <option '.selectedChk('17', $birthday).' >17</option>
+                <option '.selectedChk('18', $birthday).' >18</option>
+                <option '.selectedChk('19', $birthday).' >19</option>
+                <option '.selectedChk('20', $birthday).' >20</option>
+                <option '.selectedChk('21', $birthday).' >21</option>
+                <option '.selectedChk('22', $birthday).' >22</option>
+                <option '.selectedChk('23', $birthday).' >23</option>
+                <option '.selectedChk('24', $birthday).' >24</option>
+                <option '.selectedChk('25', $birthday).' >25</option>
+                <option '.selectedChk('26', $birthday).' >26</option>
+                <option '.selectedChk('27', $birthday).' >27</option>
+                <option '.selectedChk('28', $birthday).' >28</option>
+                <option '.selectedChk('29', $birthday).' >29</option>
+                <option '.selectedChk('30', $birthday).' >30</option>
+                <option '.selectedChk('31', $birthday).' >31</option>
+              </select>';
+
+			echo '<p>Birth Date For Staff.</p>';
+        }
+        add_meta_box(
+			'staff_birth_date',
+			'Birth Date',
+			'trinity_mediacal_birth_date',
+			array('trinitymedicalstaff'),
+			'side',
+			'default',
+			'high'
+        );
 	}
     //Staff / Post Type
     function trinity_mediacal_setup_staff_post_type() {
@@ -140,12 +331,31 @@
         function trinity_medical_flex_SC($content= null){
             $Args = array(
                 'post_type' => 'trinitymedicalstaff',
-                'posts_per_page' => 200,
-                'order' => 'ASC'
+                'posts_per_page' => 20000000,
+                'meta_key'			=> 'first_name',
+                'orderby'			=> 'meta_value',
+                'order'				=> 'ASC'
             );
-            //Update Staff Search
+             //Update Staff Search
             if(isset($_GET['staff_search']) && $_GET['staff_search'] != '' && $_GET['staff_search'] != null){
-                $Args['s'] = $_GET['staff_search'];
+                $Args['meta_query'] = array(
+                    'relation' => 'OR',
+                    array(
+                        'key' => 'first_name',
+                        'value' => $_GET['staff_search'],
+                        'compare' => 'like'
+                    ),
+                    array(
+                        'key' => 'last_name',
+                        'value' => $_GET['staff_search'],
+                        'compare' => 'like'
+                    ),
+                    array(
+                        'key' => 'last_name',
+                        'value' => $_GET['staff_search'],
+                        'compare' => 'like'
+                    )
+                );
                 $search = $_GET['staff_search'];
             }else{
                 $search = '';
@@ -181,13 +391,25 @@
                                 while ($Loop->have_posts()){
                                     $Loop->the_post();
                                     $ext = get_post_custom()['ext'][0];
+                                    $job_duties = get_post_custom()['job_duties'][0];
+                                    $firstName = get_post_custom()['first_name'][0];
+                                    $lastName = get_post_custom()['last_name'][0];
+                                    $birthMonth = get_post_custom()['birth_month'][0];
+                                    $birthDay = get_post_custom()['birth_day'][0];
                                     $content .= '
                                         <div>
                                             <div class="header">
                                                 '.get_the_post_thumbnail(null, array(100,100)).'
-                                                <h3><span>'.get_the_title().'</span><span>Phone #'.$ext.'</span></h3>
-                                            </div>
-                                            '.get_the_term_list_trinity_medical_staff_location( $post->ID, 'office', '<h4 class="office" >', '<br>', '</h4>' ).'
+                                                <h3>
+                                                    <span style="color: #6a6a75;">'.$firstName.' '.$lastName.'</span>
+                                                    <span style="color:#56adc0;">'.get_the_title().'</span>
+                                                </h3>
+                                            </div><br> 
+                                            <h4 style="margin:unset;color:#6a6a75;" ><span style="color:#56adc0;">Phone # </span>'.$ext.'</h4>
+                                            <h4 style="margin:unset;"><span style="color:#56adc0;">Birthday - </span>'.$birthMonth.' / '.$birthDay.'</h4>
+                                            <h4 style="margin:unset;color:#56adc0;">Office -</h4>'
+                                            .get_the_term_list_trinity_medical_staff_location( $post->ID, 'office', '<h4 style="margin:unset;color:#6a6a75;" class="office" >', '<br>', '</h4>' ).'
+                                            <h4 style="margin:unset;color:#6a6a75;" ><span style="color:#56adc0;">Job Duties - </span>'.$job_duties.'</h4>
                                             <p>'.substr(get_the_content(), 0, 300).'</p>
                                         </div>';
                                 }
