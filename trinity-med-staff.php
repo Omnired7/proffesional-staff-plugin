@@ -3,7 +3,7 @@
  * Plugin Name: Trinity Medical Staff
  * Plugin URI:  https://omnigecko.io
  * Description: Plugin for custom staff page & shortcode.
- * Version:     1.0.2
+ * Version:     1.0.3
  * Author:      Omni Gecko Solutions
  * Author URI:  https://omnigecko.io
  */
@@ -118,7 +118,7 @@
 		}
 		add_meta_box(
 			'staff_ext',
-			'Ext #',
+			'Phone #',
 			'custom_staff_ext',
 			array('trinitymedicalstaff'),
 			'side',
@@ -131,12 +131,12 @@
 			// Get the Extension data if it's already been entered
 			$job_duties = get_post_meta( $post->ID, 'job_duties', true );
 			// Output the field
-			echo '<input type="tjob_duties" name="job_duties" value="' . esc_textarea( $job_duties )  . '" class="widefat">';
-			echo '<p>Job dutties for staff.</p>';
+			echo '<input type="job_duties" name="job_duties" value="' . esc_textarea( $job_duties )  . '" class="widefat">';
+			echo '<p>Position for staff member.</p>';
 		}
 		add_meta_box(
 			'staff_job_duties',
-			'Job Duties',
+			'Position',
 			'custom_staff_job_duties',
 			array('trinitymedicalstaff'),
 			'normal',
@@ -192,18 +192,18 @@
 				}
 			}
             echo '<select name="birth_month" class="widefat">
-                    <option '.selectedChk('Jan.', $birthMonth).'>January</option>
-                    <option '.selectedChk('Feb.', $birthMonth).'>February</option>
-                    <option '.selectedChk('Mar.', $birthMonth).'>March</option>
-                    <option '.selectedChk('Apr.', $birthMonth).'>April</option>
-                    <option '.selectedChk('May.', $birthMonth).'>May</option>
-                    <option '.selectedChk('Jun.', $birthMonth).'>June</option>
-                    <option '.selectedChk('Jul.', $birthMonth).'>July</option>
-                    <option '.selectedChk('Aug.', $birthMonth).'>August</option>
-                    <option '.selectedChk('Sep.', $birthMonth).'>September</option>
-                    <option '.selectedChk('Oct.', $birthMonth).'>October</option>
-                    <option '.selectedChk('Nov.', $birthMonth).'>November</option>
-                    <option '.selectedChk('Dec.', $birthMonth).'>December</option>
+                    <option '.selectedChk('January', $birthMonth).'>January</option>
+                    <option '.selectedChk('February', $birthMonth).'>February</option>
+                    <option '.selectedChk('March', $birthMonth).'>March</option>
+                    <option '.selectedChk('April', $birthMonth).'>April</option>
+                    <option '.selectedChk('May', $birthMonth).'>May</option>
+                    <option '.selectedChk('June', $birthMonth).'>June</option>
+                    <option '.selectedChk('July', $birthMonth).'>July</option>
+                    <option '.selectedChk('August', $birthMonth).'>August</option>
+                    <option '.selectedChk('September', $birthMonth).'>September</option>
+                    <option '.selectedChk('October', $birthMonth).'>October</option>
+                    <option '.selectedChk('November', $birthMonth).'>November</option>
+                    <option '.selectedChk('December', $birthMonth).'>December</option>
                  </select><br><br>';
             echo '<select name="birth_day" class="widefat">
                 <option '.selectedChk('01', $birthday).' >1</option>
@@ -265,7 +265,7 @@
             'not_found'          => __( 'No Staff found' ),
             'not_found_in_trash' => __( 'No Staff found in trash' )
         );
-        $supports = array('title', 'thumbnail', 'editor', 'page-attributes');
+        $supports = array('thumbnail', 'editor', 'page-attributes');
         //Add Catagories to plugin
         $args = array(
             'labels'=> $lbls,
@@ -343,17 +343,32 @@
                     array(
                         'key' => 'first_name',
                         'value' => $_GET['staff_search'],
-                        'compare' => 'like'
+                        'compare' => 'LIKE'
                     ),
                     array(
                         'key' => 'last_name',
                         'value' => $_GET['staff_search'],
-                        'compare' => 'like'
+                        'compare' => 'LIKE'
                     ),
                     array(
-                        'key' => 'last_name',
+                        'key' => 'ext',
                         'value' => $_GET['staff_search'],
-                        'compare' => 'like'
+                        'compare' => 'LIKE'
+                    ),
+                    array(
+                        'key' => 'job_duties',
+                        'value' => $_GET['staff_search'],
+                        'compare' => 'LIKE'
+                    ),
+                    array(
+                        'key' => 'birth_month',
+                        'value' => $_GET['staff_search'],
+                        'compare' => 'LIKE'
+                    ),
+                    array(
+                        'key' => 'birth_day',
+                        'value' => $_GET['staff_search'],
+                        'compare' => 'LIKE'
                     )
                 );
                 $search = $_GET['staff_search'];
@@ -396,21 +411,21 @@
                                     $lastName = get_post_custom()['last_name'][0];
                                     $birthMonth = get_post_custom()['birth_month'][0];
                                     $birthDay = get_post_custom()['birth_day'][0];
+                                    $getPostContent = get_the_content();
+                                    $postContentwithbreaks = wpautop( $getPostContent, true);
                                     $content .= '
                                         <div>
                                             <div class="header">
                                                 '.get_the_post_thumbnail(null, array(100,100)).'
                                                 <h3>
                                                     <span style="color: #6a6a75;">'.$firstName.' '.$lastName.'</span>
-                                                    <span style="color:#56adc0;">'.get_the_title().'</span>
                                                 </h3>
-                                            </div><br> 
+                                            </div><br>
                                             <h4 style="margin:unset;color:#6a6a75;" ><span style="color:#56adc0;">Phone # </span>'.$ext.'</h4>
-                                            <h4 style="margin:unset;"><span style="color:#56adc0;">Birthday - </span>'.$birthMonth.' / '.$birthDay.'</h4>
-                                            <h4 style="margin:unset;color:#56adc0;">Office -</h4>'
-                                            .get_the_term_list_trinity_medical_staff_location( $post->ID, 'office', '<h4 style="margin:unset;color:#6a6a75;" class="office" >', '<br>', '</h4>' ).'
-                                            <h4 style="margin:unset;color:#6a6a75;" ><span style="color:#56adc0;">Job Duties - </span>'.$job_duties.'</h4>
-                                            <p>'.substr(get_the_content(), 0, 300).'</p>
+                                            <h4 style="margin:unset;color:#56adc0;">Office - '.get_the_term_list_trinity_medical_staff_location( $post->ID, 'office', '<span style="color:#6a6a75;">', ' / ', '</span>' ).'</h4>
+                                            <h4 style="margin:unset;color:#6a6a75;" ><span style="color:#56adc0;">Position - </span>'.$job_duties.'</h4>
+                                            <h4 style="margin-top:unset;color:#56adc0;">Birthday - <span style="color:#6a6a75;">'.$birthMonth.' / '.$birthDay.'</span></h4>
+                                            <p>'.substr($postContentwithbreaks, 0, 300).'</p>
                                         </div>';
                                 }
                             }else{
@@ -446,7 +461,8 @@
                                 margin: auto;           
                             }
                             .trinity-medical-staff-post-flex>div{
-                                height: 22em;
+                                width: 100%;
+                                height: auto;
                                 margin-top: 1em;
                             }
                             .trinity-medical-staff-post-flex>div .header{
@@ -464,12 +480,19 @@
                             }
                             /*Small devices (landscape phones, 576px and up)*/
                             @media (min-width: 576px) {
+                                .trinity-medical-staff-post-flex>div{
+                                    width: 45%;
+                                }
                                 .trinity-medical-staff-post-flex>div .header h3 {
                                     width: 70%;
+                                    text-align: center;
                                 }
                             }
                             /* SM */
                             @media only screen and (min-width : 768px) {
+                                .trinity-medical-staff-post-flex{
+                                    justify-content: space-around;
+                                }
                                 .trinity-medical-staff-post-flex>div .header h3 {
                                     width: 80%;
                                 }
@@ -477,10 +500,11 @@
                             /* Medium Devices, Desktops */
                             @media only screen and (min-width : 992px) {
                                 .trinity-medical-staff-post-flex>div{
-                                    height: 20em;
+                                    height: 28em;
                                     width: 45%;
                                 }
                                 .trinity-medical-staff-post-flex>div .header h3{
+                                    text-align: left;
                                     width: 60%;
                                 }
                             }
@@ -492,7 +516,6 @@
                             }
                             /*LG*/
                             @media only screen and (min-width : 1200px) {
-
                             }
                         </style>";
             
@@ -526,6 +549,61 @@
         ));
     }
     add_action( 'init', 'create_office_hierarchical_taxonomy', 0 );
+    //Modify Staff Post type / Admin Columns
+    add_filter( 'manage_trinitymedicalstaff_posts_columns', 'trinity_medical_filter_trinitymedicalstaff_posts_columns' );
+    function trinity_medical_filter_trinitymedicalstaff_posts_columns( $columns ) {
+        $columns = array(
+            'cb' => $columns['cb'],
+            'staff_first_name' => __( 'First Name'),
+            'staff_last_name' => __( 'Last Name'),
+            'taxonomy-office' => __( 'Office'),
+            'date' => __('date')
+        );
+        return $columns;
+    }
+    //Modify Staff Post type / Admin Columns Content
+    add_action('manage_trinitymedicalstaff_posts_custom_column', 'trinity_medical_staff_posts_columns', 10, 2);
+    function trinity_medical_staff_posts_columns ($column, $post_id){
+        switch($column){
+            case 'staff_first_name': // First Name column
+                echo '<a href="'.get_edit_post_link($post_id).'">'.get_post_meta($post_id, 'first_name', true).'</a>';
+                break;
+        }
+        switch($column){
+            case 'staff_last_name': // First Name column
+                echo '<a href="'.get_edit_post_link($post_id).'">'.get_post_meta($post_id, 'last_name', true).'</a>';
+                break;
+        }
+    }
+    //Modify Staff Post type / Admin Columns Sortable
+    add_filter( 'manage_edit-trinitymedicalstaff_sortable_columns', 'trinity_medical_staff_sortable_columns', 10, 1);
+    function trinity_medical_staff_sortable_columns($cols){
+        $cols['staff_first_name'] = 'first_name';   
+        $cols['staff_last_name'] = 'first_name';
+        return $cols;
+    }
+    //Modify Staff Post Type / Admin Search Functionality
+    add_filter( 'posts_join', 'trinity_medical_staff_search_join' );
+    function trinity_medical_staff_search_join ( $join ) {
+        global $pagenow, $wpdb;
+        // I want the filter only when performing a search on edit page of Custom Post Type named "trinitymedicalstaff".
+        if ( is_admin() && 'edit.php' === $pagenow && 'trinitymedicalstaff' === $_GET['post_type'] && ! empty( $_GET['s'] ) ) {    
+            $join .= 'LEFT JOIN ' . $wpdb->postmeta . ' ON ' . $wpdb->posts . '.ID = ' . $wpdb->postmeta . '.post_id ';
+        }
+        return $join;
+    }
+    add_filter( 'posts_where', 'trinitymedicalstaff_search_where' );
+    function trinitymedicalstaff_search_where( $where ) {
+        global $pagenow, $wpdb;
+
+        // I want the filter only when performing a search on edit page of Custom Post Type named "trinitymedicalstaff".
+        if ( is_admin() && 'edit.php' === $pagenow && 'trinitymedicalstaff' === $_GET['post_type'] && ! empty( $_GET['s'] ) ) {
+            $where = preg_replace(
+                "/\(\s*" . $wpdb->posts . ".post_title\s+LIKE\s*(\'[^\']+\')\s*\)/",
+                "(" . $wpdb->posts . ".post_title LIKE $1) OR (" . $wpdb->postmeta . ".meta_value LIKE $1)", $where );
+        }
+        return $where;
+    }
 //Activations
     //Application / Custom Post Type Activation
     function trinity_mediacal_staff_plugin_staff_activation(){
