@@ -416,7 +416,7 @@
                                     $content .= '
                                         <div>
                                             <div class="header">
-                                                '.get_the_post_thumbnail(null, array(100,100)).'
+                                                '.get_the_post_thumbnail(null, array(100,100), array('style'=>'border-radius:2.5%;')).'
                                                 <h3>
                                                     <span style="color: #6a6a75;">'.$firstName.' '.$lastName.'</span>
                                                 </h3>
@@ -595,7 +595,6 @@
     add_filter( 'posts_where', 'trinitymedicalstaff_search_where' );
     function trinitymedicalstaff_search_where( $where ) {
         global $pagenow, $wpdb;
-
         // I want the filter only when performing a search on edit page of Custom Post Type named "trinitymedicalstaff".
         if ( is_admin() && 'edit.php' === $pagenow && 'trinitymedicalstaff' === $_GET['post_type'] && ! empty( $_GET['s'] ) ) {
             $where = preg_replace(
